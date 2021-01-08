@@ -1,27 +1,35 @@
 from add_other_modules import add_all, valid_mod
-from filter_clickable_mods import check_clickable, only_clickable
+# from filter_clickable_mods import check_clickable, only_clickable
 from get_mod_data import get_mod_data
 import random
+import csv
+import ast
+
+all_clickable_mods = {}
+with open('mod_relationships.csv') as csv_file:
+    csv_reader = csv.DictReader(csv_file, delimiter=',')
+    for row in csv_reader:
+        x = row['related_mods']
+        x = ast.literal_eval(x)
+        all_clickable_mods[row['module']] = x
 
 which_mod = False
 
 def get_valid_mod():
     global which_mod
-    while not which_mod or not valid_mod(which_mod) or not check_clickable(which_mod):
+    while not which_mod or not valid_mod(which_mod) or \
+            which_mod not in all_clickable_mods.keys():
         which_mod = input("Input mod here: ")
 
 get_valid_mod()
 
 all_visited_mods = [which_mod]
-random_mod = get_mod_data(which_mod)
-random_mod = only_clickable(random_mod)
+# random_mod = get_mod_data(which_mod)
+# random_mod = only_clickable(random_mod)
+random_mod = all_clickable_mods[which_mod]
 
 def get_path(module, steps):
-    related_mods = []
-    add_all(related_mods, get_mod_data(module))
-
-    related_mods = only_clickable(related_mods)
-
+    related_mods = all_clickable_mods[module]
 
     current_mod_list = [module]
 
@@ -59,9 +67,11 @@ def get_path(module, steps):
 
             # get the possible mods the next thing in the list instead
             current_mod = current_mod_list[-1]
-            related_mods = []
-            add_all(related_mods, get_mod_data(current_mod))
-            related_mods = only_clickable(related_mods)
+            # related_mods = []
+            # add_all(related_mods, get_mod_data(current_mod))
+            # related_mods = only_clickable(related_mods)
+
+            related_mods = all_clickable_mods[current_mod]
 
             return random_walk(related_mods, steps + 1)
 
@@ -76,9 +86,11 @@ def get_path(module, steps):
             # keep track in all_visited_mods
             # if i backtrack and see that all the possible mods are in visited, then i backtrack again. :D
 
-            possible_new_list = []
-            add_all(possible_new_list, get_mod_data(possible_mod))
-            possible_new_list = only_clickable(possible_new_list)
+            # possible_new_list = []
+            # add_all(possible_new_list, get_mod_data(possible_mod))
+            # possible_new_list = only_clickable(possible_new_list)
+            possible_new_list = all_clickable_mods[possible_mod]
+
             possible_new_list = list(filter(lambda x: x not in all_visited_mods, possible_new_list))
 
             # need a boolean to check if the current related_mods got anything as well

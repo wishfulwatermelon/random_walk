@@ -1,7 +1,7 @@
 import csv
 import ast
 
-test_dict = {}
+all_clickable_mods = {}
 with open('mod_relationships.csv') as csv_file:
     csv_reader = csv.DictReader(csv_file, delimiter=',')
     for row in csv_reader:
