@@ -20,10 +20,7 @@ with open('all_mods.json', 'r') as file:
         add_all(related_mods, get_mod_data(mod_name))
         related_mods = only_clickable(related_mods)
 
-        if not related_mods:
-            continue
-
         mod_relationships = mod_relationships.append({'module': mod_name, 'related_mods': related_mods}, ignore_index=True)
         print(i)
 
-mod_relationships.to_csv('mod_relationships.csv', index=False)
+mod_relationships.to_csv('mod_relationships_new.csv', index=False)

@@ -6,27 +6,26 @@ import csv
 import ast
 
 all_clickable_mods = {}
-with open('mod_relationships.csv') as csv_file:
+with open('mod_relationships_new.csv') as csv_file:
     csv_reader = csv.DictReader(csv_file, delimiter=',')
     for row in csv_reader:
         x = row['related_mods']
         x = ast.literal_eval(x)
         all_clickable_mods[row['module']] = x
 
-which_mod = False
 
-def get_valid_mod():
-    global which_mod
-    while not which_mod or not valid_mod(which_mod) or \
-            which_mod not in all_clickable_mods.keys():
-        which_mod = input("Input mod here: ")
+# def get_valid_mod():
+#     global which_mod
+#     while not which_mod or not valid_mod(which_mod) or \
+#             which_mod not in all_clickable_mods.keys():
+#         which_mod = input("Input mod here: ")
+#
+# get_valid_mod()
 
-get_valid_mod()
-
-all_visited_mods = [which_mod]
-# random_mod = get_mod_data(which_mod)
-# random_mod = only_clickable(random_mod)
-random_mod = all_clickable_mods[which_mod]
+all_visited_mods = []
+# # random_mod = get_mod_data(which_mod)
+# # random_mod = only_clickable(random_mod)
+# random_mod = all_clickable_mods[which_mod]
 
 def get_path(module, steps):
     related_mods = all_clickable_mods[module]
@@ -121,6 +120,25 @@ def get_path(module, steps):
 
 
 
-no_steps = int(input("How many steps: "))
+# print(get_path(which_mod, no_steps))
 
-print(get_path(which_mod, no_steps))
+
+long_ass_list = []
+for key, value in all_clickable_mods.items():
+    print(key)
+    if not get_path(key, 5):
+        continue
+    dict_to_add = {}
+    path_to_add = get_path(key, 5)
+    if len(path_to_add) < 6:
+        continue
+    all_visited_mods = []
+    final_pos = path_to_add[-1]
+    dict_to_add['mod1'] = key
+    dict_to_add['mod2'] = final_pos
+    dict_to_add['root'] =path_to_add
+    long_ass_list.append(dict_to_add)
+
+with open('good_shit.csv', 'w', newline='') as file:
+    wr = csv.writer(file, quoting=csv.QUOTE_ALL)
+    wr.writerow(long_ass_list)
